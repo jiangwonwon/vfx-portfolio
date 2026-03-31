@@ -84,7 +84,7 @@ function Reel({ targetIndex }: { targetIndex: number }) {
   );
 }
 
-export default function SlotMachineVideo(): JSX.Element {
+export default function SlotMachineVideo() {
   const [targetIndex, setTargetIndex] = useState(0);
   const [spinning, setSpinning] = useState(false);
   const [spineAnim, setSpineAnim] = useState<"idle" | "spin">("idle");
@@ -135,7 +135,7 @@ export default function SlotMachineVideo(): JSX.Element {
 
       {/* 🔥 整台機台（會縮放） */}
       <div className="machine" style={{ transform: `scale(${scale})` }}>
-        <SpineBackground animation={spineAnim} />
+        <SpineBackground animation={spineAnim} onComplete={() => {}} />
 
         {/* 螢幕 */}
         <div className="screen">

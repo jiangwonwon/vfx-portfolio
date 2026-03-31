@@ -19,15 +19,12 @@ export default function SpineBackground({
       atlasUrl: "/slot_bg.atlas",
 
       animation: "idle",
-      loop: true,
 
       alpha: true,
       backgroundColor: "#00000000",
 
-      width: 1920,
-      height: 1080,
-
       showControls: false,
+      preserveDrawingBuffer: false,
     });
 
     playerRef.current = player;
