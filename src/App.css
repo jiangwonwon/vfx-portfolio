@@ -1,0 +1,144 @@
+/* 🔥 外層 */
+.stage {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 🎥 背景影片 */
+.bg-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 暗角 */
+.vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(circle, transparent 50%, rgba(0, 0, 0, 0.8) 100%);
+}
+
+/* 🎰 機台 */
+.machine {
+  width: 1920px;
+  height: 1080px;
+  position: relative;
+  transform-origin: center;
+  z-index: 2;
+}
+
+/* 🎥 螢幕位置（精準對齊） */
+.screen {
+  position: absolute;
+  width: 840px;
+  height: 480px;
+  top: 300px;
+  left: 49%;
+  transform: translateX(-50%);
+}
+
+/* 🎬 reel */
+.reel-window-full {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.video {
+  width: 100%;
+  height: 480px;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+/* 遮罩 */
+.mask-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  clip-path: polygon(
+    3% 0%,
+    97% 0%,
+    100% 8%,
+    100% 92%,
+    97% 100%,
+    3% 100%,
+    0% 92%,
+    0% 8%
+  );
+}
+
+/* 發光 */
+.glow-frame {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  animation: glow 1.5s infinite alternate;
+  box-shadow:
+    0 0 20px #00eaff,
+    0 0 40px #8a2be2;
+}
+
+@keyframes glow {
+  from {
+    filter: brightness(1);
+  }
+  to {
+    filter: brightness(1.5);
+  }
+}
+
+canvas {
+  position: absolute !important;
+  width: 1920px !important;
+  height: 1080px !important;
+  display: block;
+}
+.spine-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  /* 🔥 真正置中 */
+  transform: translate(-50%, -50%) scale(1);
+
+  width: 1920px;
+  height: 1080px;
+
+  z-index: 0;
+  pointer-events: none;
+}
+
+.spin-hit-area {
+  position: absolute;
+
+  width: 120px;
+  height: 260px;
+
+  left: 80%;
+  top: 40%;
+
+  cursor: pointer;
+  z-index: 50;
+
+  /* 🔥 完全透明 */
+  background: rgb(255, 0, 0); /* 可改成 0.2 debug */
+
+  /* 👉 可選：點擊感 */
+  /* transition: transform 0.1s; */
+}
+
+/* .spin-hit-area:active {
+  transform: scale(0.95);
+} */
