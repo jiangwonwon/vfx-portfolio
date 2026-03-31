@@ -15,8 +15,8 @@ export default function SpineBackground({
     if (!containerRef.current) return;
 
     const player = new SpinePlayer(containerRef.current, {
-      jsonUrl: "/slot_bg.json",
-      atlasUrl: "/slot_bg.atlas",
+      jsonUrl: "slot_bg.json",
+      atlasUrl: "slot_bg.atlas",
 
       animation: "idle",
 
