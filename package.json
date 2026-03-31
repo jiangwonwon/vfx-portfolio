@@ -7,11 +7,12 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@esotericsoftware/spine-player": "^4.2.108",
-    "@pixi/react": "^8.0.5",
     "@tailwindcss/vite": "^4.2.2",
     "dragonbones-pixi": "^5.6.0",
     "framer-motion": "^12.38.0",

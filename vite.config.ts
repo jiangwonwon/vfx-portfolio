@@ -11,4 +11,5 @@ export default defineConfig({
 
     babel({ presets: [reactCompilerPreset()] }),
   ],
+  base: "/vfx-portfolio/",
 });
