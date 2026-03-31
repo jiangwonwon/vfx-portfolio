@@ -128,7 +128,7 @@ export default function SlotMachineVideo() {
     <div className="stage" onClick={handlePull}>
       {/* 背景影片 */}
       <video autoPlay muted loop playsInline className="bg-video">
-        <source src="/background_01.webm" type="video/webm" />
+        <source src="background_01.webm" type="video/webm" />
       </video>
 
       <div className="vignette" />
