@@ -25,6 +25,7 @@ export default function SpineBackground({
 
       showControls: false,
       preserveDrawingBuffer: false,
+      viewport: { debugRender: false },
     });
 
     playerRef.current = player;
