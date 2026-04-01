@@ -30,7 +30,6 @@ function Reel({ targetIndex }: { targetIndex: number }) {
 
   const spinTo = async () => {
     const SPIN_LOOPS = 3;
-
     const baseIndex = SAFE_OFFSET + targetIndex;
 
     const targetY = -(
@@ -51,7 +50,7 @@ function Reel({ targetIndex }: { targetIndex: number }) {
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isFirst.current) {
       controls.set({
         y: -(SAFE_OFFSET + targetIndex) * ITEM_HEIGHT,
@@ -89,7 +88,6 @@ export default function SlotMachineVideo() {
   const [spinning, setSpinning] = useState(false);
   const [spineAnim, setSpineAnim] = useState<"idle" | "spin">("idle");
 
-  // 🔥 RWD SCALE
   const [scale, setScale] = useState(1);
 
   // 🔥 Loading 狀態
@@ -111,14 +109,13 @@ export default function SlotMachineVideo() {
         setProgress(Math.floor((loaded / total) * 100));
 
         if (loaded === total) {
-          setTimeout(() => {
-            setIsLoaded(true);
-          }, 300); // 小延遲更順
+          setTimeout(() => setIsLoaded(true), 300);
         }
       };
     });
   }, []);
 
+  // ✅ RWD
   useEffect(() => {
     const updateScale = () => {
       const scaleX = window.innerWidth / 1920;
@@ -137,7 +134,6 @@ export default function SlotMachineVideo() {
     setSpineAnim("spin");
 
     let nextIndex = Math.floor(Math.random() * reel.length);
-
     if (nextIndex === targetIndex) {
       nextIndex = (nextIndex + 1) % reel.length;
     }
@@ -152,39 +148,33 @@ export default function SlotMachineVideo() {
   };
 
   return (
-    <>
-      {/* 🔥 Loading 畫面 */}
+    <div className="stage" onClick={handlePull}>
+      {/* 🔥 背景影片 */}
+      <video autoPlay muted loop playsInline className="bg-video">
+        <source src="background_01.webm" type="video/webm" />
+      </video>
+
+      <div className="vignette" />
+
+      {/* 🔥 機台（永遠存在） */}
+      <div className="machine" style={{ transform: `scale(${scale})` }}>
+        <SpineBackground animation={spineAnim} onComplete={() => {}} />
+
+        <div className="screen">
+          <div className="glow-frame" />
+          <div className="mask-container reels">
+            <Reel targetIndex={targetIndex} />
+          </div>
+        </div>
+      </div>
+
+      {/* 🔥 Loading 蓋在最上面（關鍵） */}
       {!isLoaded && (
         <div className="loading-screen">
           <div className="spinner" />
           <p>Loading {progress}%</p>
         </div>
       )}
-
-      {/* 🔥 主畫面 */}
-      {isLoaded && (
-        <div className="stage" onClick={handlePull}>
-          {/* 背景影片 */}
-          <video autoPlay muted loop playsInline className="bg-video">
-            <source src="background_01.webm" type="video/webm" />
-          </video>
-
-          <div className="vignette" />
-
-          {/* 🔥 整台機台（會縮放） */}
-          <div className="machine" style={{ transform: `scale(${scale})` }}>
-            <SpineBackground animation={spineAnim} onComplete={() => {}} />
-
-            {/* 螢幕 */}
-            <div className="screen">
-              <div className="glow-frame" />
-              <div className="mask-container reels">
-                <Reel targetIndex={targetIndex} />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+    </div>
   );
 }
