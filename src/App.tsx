@@ -21,7 +21,9 @@ const reelData = [
 
 const ITEM_HEIGHT = 480;
 
-//   🚀 1. 單一影片疊加層 (全場唯一一個 Video，永遠不移動，不銷毀)
+/**
+ * 🚀 1. 單一影片疊加層 (加入嚴格的錯誤捕捉，防止白畫面崩潰)
+ */
 function OverlayVideo({
   targetIndex,
   spinning,
@@ -33,14 +35,26 @@ function OverlayVideo({
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // 當 targetIndex 改變（即按下旋轉按鈕瞬間），立刻更換影片來源並在背景偷播
   useEffect(() => {
     const video = videoRef.current;
-    if (video && isLoaded) {
-      // 確保影片播放進度歸零
-      video.currentTime = 0;
-      video.play().catch((e) => console.warn("自動播放阻擋:", e));
-    }
+    if (!video || !isLoaded) return;
+
+    const playVideo = async () => {
+      try {
+        // 🔥 關鍵防護：檢查影片是否已經載入基本的 Metadata (readyState >= 1)
+        // 否則在 GitHub Pages 等慢速網路上設定 currentTime 會拋出錯誤導致白畫面！
+        if (video.readyState >= 1) {
+          video.currentTime = 0;
+        }
+
+        await video.play();
+      } catch (error) {
+        // 捕捉所有播放錯誤或尚未就緒的錯誤，確保 React 不會崩潰
+        console.warn("影片尚未緩衝完成或被瀏覽器阻擋:", error);
+      }
+    };
+
+    playVideo();
   }, [targetIndex, isLoaded]);
 
   return (
@@ -52,14 +66,13 @@ function OverlayVideo({
         width: "100%",
         height: ITEM_HEIGHT,
         zIndex: 10,
-        // 🔥 核心魔術：旋轉中完全隱藏，一停下來瞬間出現！
         opacity: spinning ? 0 : 1,
         pointerEvents: "none",
       }}
     >
       <video
         ref={videoRef}
-        src={reelData[targetIndex].video} // 直接綁定目標影片
+        src={reelData[targetIndex].video}
         className="video"
         loop
         muted
