@@ -21,9 +21,7 @@ const reelData = [
 
 const ITEM_HEIGHT = 480;
 
-/**
- * 🚀 1. 單一影片疊加層 (全場唯一一個 Video，永遠不移動，不銷毀)
- */
+//   🚀 1. 單一影片疊加層 (全場唯一一個 Video，永遠不移動，不銷毀)
 function OverlayVideo({
   targetIndex,
   spinning,
