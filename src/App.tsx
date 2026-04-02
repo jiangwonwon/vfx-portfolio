@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, useAnimation } from "framer-motion";
 import "./app.css";
 import SpineBackground from "./SpineBackground";
