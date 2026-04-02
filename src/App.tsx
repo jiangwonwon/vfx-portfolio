@@ -155,10 +155,15 @@ export default function SlotMachineVideo() {
   const [spineAnim, setSpineAnim] = useState<"idle" | "spin">("idle");
   const [scale, setScale] = useState(1);
 
-  const [isLoaded, setIsLoaded] = useState(false);
+  // 🔥 新增：拆分兩種 Loading 狀態
+  const [isMediaLoaded, setIsMediaLoaded] = useState(false); // 影片與圖片
+  const [isSpineLoaded, setIsSpineLoaded] = useState(false); // Spine 外框
   const [progress, setProgress] = useState(0);
 
-  // 🚀 Loading 邏輯維持之前優化過的防卡死版本
+  // 真正的「完全載入」必須兩者皆 True
+  const isAllLoaded = isMediaLoaded && isSpineLoaded;
+
+  // ✅ 預載「縮圖」與「第一支影片」
   useEffect(() => {
     let processed = 0;
     const itemsToPreload = [
@@ -172,7 +177,8 @@ export default function SlotMachineVideo() {
       processed++;
       setProgress(Math.floor((processed / total) * 100));
       if (processed === total && isMounted) {
-        setTimeout(() => setIsLoaded(true), 300);
+        // 🔥 這裡改成 setIsMediaLoaded
+        setTimeout(() => setIsMediaLoaded(true), 300);
       }
     };
 
@@ -192,9 +198,13 @@ export default function SlotMachineVideo() {
       }
     });
 
+    // 🛡️ 保底機制稍微拉長一點（因為 Spine 比較大），例如 8 秒
     const fallbackTimer = setTimeout(() => {
-      if (isMounted) setIsLoaded(true);
-    }, 5000);
+      if (isMounted) {
+        setIsMediaLoaded(true);
+        setIsSpineLoaded(true); // 時間到，強迫雙雙通關
+      }
+    }, 8000);
 
     return () => {
       isMounted = false;
@@ -216,7 +226,7 @@ export default function SlotMachineVideo() {
   }, []);
 
   const handlePull = () => {
-    if (spinning || !isLoaded) return;
+    if (spinning || !isAllLoaded) return;
 
     setSpineAnim("spin");
 
@@ -251,32 +261,39 @@ export default function SlotMachineVideo() {
       <div className="vignette" />
 
       <div className="machine" style={{ transform: `scale(${scale})` }}>
-        <SpineBackground animation={spineAnim} onComplete={() => {}} />
+        {/* 🔥 把 onLoaded 傳給 SpineBackground */}
+        <SpineBackground
+          animation={spineAnim}
+          onComplete={() => {}}
+          onLoaded={() => setIsSpineLoaded(true)}
+        />
 
         <div className="screen">
           <div className="glow-frame" />
-          {/* 🔥 確保 mask-container 有 position: relative，這樣疊加層才能精準覆蓋 */}
           <div
             className="mask-container reels"
             style={{ position: "relative", overflow: "hidden" }}
           >
-            {/* 旋轉的純圖片輪盤 */}
             <Reel targetIndex={targetIndex} />
-
-            {/* 靜態的單一影片疊加層 */}
             <OverlayVideo
               targetIndex={targetIndex}
               spinning={spinning}
-              isLoaded={isLoaded}
+              isLoaded={isAllLoaded}
             />
           </div>
         </div>
       </div>
 
-      {!isLoaded && (
+      {/* 🔥 改用 isAllLoaded 判斷，並且給予更好的文字回饋 */}
+      {!isAllLoaded && (
         <div className="loading-screen">
           <div className="spinner" />
-          <p>Loading {progress}%</p>
+          <p>
+            {/* 如果圖片影片載好了，就在等 Spine，換個文字告訴使用者 */}
+            {isMediaLoaded
+              ? "Loading Machine Frame..."
+              : `Loading Media ${progress}%`}
+          </p>
         </div>
       )}
     </div>
