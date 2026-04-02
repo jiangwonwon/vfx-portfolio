@@ -245,6 +245,24 @@ export default function SlotMachineVideo() {
     }, 2400);
   };
 
+  // 🎮 新增：監聽空白鍵觸發旋轉
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // 偵測是否按下空白鍵 (Space)
+      if (e.code === "Space") {
+        e.preventDefault(); // 🔥 非常重要：防止按下空白鍵時網頁自動往下捲動
+        handlePull();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    // 元件卸載時清除監聽器
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [spinning, isAllLoaded, targetIndex]); // 🔥 必須加入這三個依賴項，確保 handlePull 讀到最新的狀態
+
   return (
     <div className="stage" onClick={handlePull}>
       <video
