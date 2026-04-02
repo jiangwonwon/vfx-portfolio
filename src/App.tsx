@@ -163,6 +163,9 @@ export default function SlotMachineVideo() {
   // 真正的「完全載入」必須兩者皆 True
   const isAllLoaded = isMediaLoaded && isSpineLoaded;
 
+  // 🔥 新增：用來記錄是否已經執行過開場自動旋轉
+  const hasAutoSpun = useRef(false);
+
   // ✅ 預載「縮圖」與「第一支影片」
   useEffect(() => {
     let processed = 0;
@@ -244,6 +247,20 @@ export default function SlotMachineVideo() {
       setSpineAnim("idle");
     }, 2400);
   };
+
+  // ✨ 新增：監控載入完成，自動執行第一轉
+  useEffect(() => {
+    if (isAllLoaded && !hasAutoSpun.current) {
+      hasAutoSpun.current = true; // 確保只會自動轉這一次
+
+      // 延遲一點點時間 (例如 800ms)，讓使用者先看到靜止的機台，再啟動旋轉
+      const autoSpinTimer = setTimeout(() => {
+        handlePull();
+      }, 800);
+
+      return () => clearTimeout(autoSpinTimer);
+    }
+  }, [isAllLoaded, handlePull]); // 監聽載入狀態與 handlePull
 
   // 🎮 新增：監聽空白鍵觸發旋轉
   useEffect(() => {
